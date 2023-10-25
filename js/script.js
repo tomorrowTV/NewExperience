@@ -10,9 +10,38 @@ document.addEventListener('DOMContentLoaded', function () {
         // Add more video filenames as needed
     ];
 
-    // Create a reference to the loading screen and "Start" button
-    const loadingScreen = document.getElementById('loadingScreen');
-    const startButton = document.getElementById('startButton');
+    // Function to preload a video by index
+    function preloadVideoByIndex(index) {
+        return new Promise((resolve) => {
+            const preloadVideo = document.createElement('video');
+            preloadVideo.src = videoArray[index];
+            preloadVideo.preload = 'auto';
+            preloadVideo.addEventListener('loadeddata', () => {
+                preloadVideo.style.display = 'none';
+                document.body.appendChild(preloadVideo);
+                resolve();
+            });
+            preloadVideo.load();
+        });
+    }
+
+    // Preload all videos
+    Promise.all(videoArray.map((video, index) => preloadVideoByIndex(index)))
+        .then(() => {
+            // Get references to the loading screen and "Start" button
+            const loadingScreen = document.getElementById('loadingScreen');
+            const startButton = document.getElementById('startButton');
+            
+            if (loadingScreen && startButton) {
+                loadingScreen.style.display = 'none';
+                startButton.style.display = 'block';
+                startButton.addEventListener('click', () => {
+                    startAudio();
+                    audioStarted = true;
+                    playVideoByIndex(0);
+                });
+            }
+        });
 
     // Create a single video element
     const videoElement = document.createElement('video');
@@ -36,33 +65,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentVideoIndex = 0;
     const timerInterval = 100; // 100 ms
     let audioStarted = false; // Track whether audio has been started
-
-    // Function to preload a video by index
-    function preloadVideoByIndex(index) {
-        return new Promise((resolve) => {
-            const preloadVideo = document.createElement('video');
-            preloadVideo.src = videoArray[index];
-            preloadVideo.preload = 'auto';
-            preloadVideo.addEventListener('loadeddata', () => {
-                preloadVideo.style.display = 'none';
-                document.body.appendChild(preloadVideo);
-                resolve();
-            });
-            preloadVideo.load();
-        });
-    }
-
-    // Preload all videos and show the "Start" button when done
-    Promise.all(videoArray.map((video, index) => preloadVideoByIndex(index)))
-        .then(() => {
-            loadingScreen.style.display = 'none';
-            startButton.style.display = 'block';
-            startButton.addEventListener('click', () => {
-                startAudio();
-                audioStarted = true;
-                playVideoByIndex(0);
-            });
-        });
 
     // Function to play video by index and synchronize with the audio
     function playVideoByIndex(index) {
