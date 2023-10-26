@@ -1,47 +1,14 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Define an array of video filenames (without the path)
     const videoArray = [
-        'wwwroot/videos/SW1.mp4',
-        'wwwroot/videos/SW2.mp4',
-        'wwwroot/videos/SW3.mp4',
-        'wwwroot/videos/SW4.mp4',
-        'wwwroot/videos/SW5.mp4',
-        'wwwroot/videos/SW6.mp4',
+        'videos/SW1.mp4',
+        'videos/SW2.mp4',
+        'videos/SW3.mp4',
+        'videos/SW4.mp4',
+        'videos/SW5.mp4',
+        'videos/SW6.mp4',
         // Add more video filenames as needed
     ];
-
-    // Function to preload a video by index
-    function preloadVideoByIndex(index) {
-        return new Promise((resolve) => {
-            const preloadVideo = document.createElement('video');
-            preloadVideo.src = videoArray[index];
-            preloadVideo.preload = 'auto';
-            preloadVideo.addEventListener('loadeddata', () => {
-                preloadVideo.style.display = 'none';
-                document.body.appendChild(preloadVideo);
-                resolve();
-            });
-            preloadVideo.load();
-        });
-    }
-
-    // Preload all videos
-    Promise.all(videoArray.map((video, index) => preloadVideoByIndex(index)))
-        .then(() => {
-            // Get references to the loading screen and "Start" button
-            const loadingScreen = document.getElementById('loadingScreen');
-            const startButton = document.getElementById('startButton');
-            
-            if (loadingScreen && startButton) {
-                loadingScreen.style.display = 'none';
-                startButton.style.display = 'block';
-                startButton.addEventListener('click', () => {
-                    startAudio();
-                    audioStarted = true;
-                    playVideoByIndex(0);
-                });
-            }
-        });
 
     // Create a single video element
     const videoElement = document.createElement('video');
@@ -50,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Create an audio element and set its source
     const audioPlayer = document.createElement('audio');
-    audioPlayer.src = 'wwwroot/assets/Song.m4a'; // Replace with the actual audio file path
+    audioPlayer.src = 'assets/Song.m4a'; // Replace with the actual audio file path
     audioPlayer.preload = 'auto';
     audioPlayer.load();
     document.body.appendChild(audioPlayer);
@@ -65,6 +32,25 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentVideoIndex = 0;
     const timerInterval = 100; // 100 ms
     let audioStarted = false; // Track whether audio has been started
+
+    // Function to preload a video by index
+    function preloadVideoByIndex(index) {
+        const preloadVideo = document.createElement('video');
+        preloadVideo.src = videoArray[index];
+        preloadVideo.preload = 'auto';
+        preloadVideo.load();
+
+        // Once the video is loaded, add it to the body and hide it
+        preloadVideo.addEventListener('loadeddata', () => {
+            preloadVideo.style.display = 'none';
+            document.body.appendChild(preloadVideo);
+        });
+    }
+
+    // Preload all videos in the array
+    for (let i = 0; i < videoArray.length; i++) {
+        preloadVideoByIndex(i);
+    }
 
     // Function to play video by index and synchronize with the audio
     function playVideoByIndex(index) {
@@ -95,4 +81,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error('Audio playback error:', error.message);
             });
     }
+
+    // Add a click event listener to start audio and video on the first click
+    document.addEventListener('click', () => {
+        if (!audioStarted) {
+            startAudio(); // Start audio on the first click
+            audioStarted = true; // Set the flag to true to indicate audio has started
+        }
+
+        const nextIndex = (currentVideoIndex + 1) % videoArray.length;
+        playVideoByIndex(nextIndex);
+    });
 });
