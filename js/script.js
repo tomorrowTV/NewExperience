@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Define an array of video filenames (without the path)
     const videoArray = [
-        'videos/SW1.mp4',
-        'videos/SW2.mp4',
-        'videos/SW3.mp4',
-        'videos/SW4.mp4',
-        'videos/SW5.mp4',
-        'videos/SW6.mp4',
+        'wwwroot/videos/SW1.mp4',
+        'wwwroot/videos/SW2.mp4',
+        'wwwroot/videos/SW3.mp4',
+        'wwwroot/videos/SW4.mp4',
+        'wwwroot/videos/SW5.mp4',
+        'wwwroot/videos/SW6.mp4',
         // Add more video filenames as needed
     ];
 
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Create an audio element and set its source
     const audioPlayer = document.createElement('audio');
-    audioPlayer.src = 'assets/Song.m4a'; // Replace with the actual audio file path
+    audioPlayer.src = 'wwwroot/assets/Song.m4a'; // Replace with the actual audio file path
     audioPlayer.preload = 'auto';
     audioPlayer.load();
     document.body.appendChild(audioPlayer);
