@@ -2,6 +2,7 @@
 body {
     margin: 0;
     padding: 0;
+    background-color: black; /* Set the background color to black */
 }
 
 /* Center the container vertically and horizontally */
@@ -10,12 +11,11 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: black; /* Set the background color to black */
 }
 
 /* Style for the gameCanvas */
 #gameCanvas {
-    width: 100%; /* Adjust the width as needed */
+    width: 100%;
     height: auto; /* Maintain aspect ratio */
     background-color: transparent; /* Set the canvas background color */
 }
@@ -25,6 +25,7 @@ body {
     max-width: 100%;
     height: auto; /* Maintain the video's aspect ratio */
     object-fit: center; /* Center the video content within the videoPlayer container */
+    display: block;
 }
 
 /* You can keep your existing styles for other elements */
