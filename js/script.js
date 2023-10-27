@@ -10,10 +10,12 @@ document.addEventListener('DOMContentLoaded', function () {
         // Add more video filenames as needed
     ];
 
-    // Create a single video element
+    const videoPlayerContainer = document.getElementById('videoPlayerContainer');
     const videoElement = document.createElement('video');
     videoElement.id = 'videoPlayer';
-    document.body.appendChild(videoElement);
+    videoElement.controls = true; // Add controls for user interaction
+    videoPlayerContainer.appendChild(videoElement);
+
 
     // Create an audio element and set its source
     const audioPlayer = document.createElement('audio');
