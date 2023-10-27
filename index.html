@@ -9,7 +9,11 @@
 </head>
 <body>
     <canvas id="gameCanvas"></canvas>
-    <video id="videoPlayer" controls src="wwwroot/videos/SW1.mp4"></video>
+
+    <!-- Video player with autoplay and muted attributes -->
+    <video id="videoPlayer" controls autoplay muted>
+        <source src="wwwroot/videos/SW1.mp4" type="video/mp4">
+    </video>
 
     <script src="js/script.js"></script>
 </body>
