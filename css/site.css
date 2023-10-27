@@ -1,7 +1,8 @@
 /* Other styles for the video element can go here */
-video {
+.videoPlayer {
     width: 100%; /* Adjust the width as needed */
     height: 100%; /* Set the video to the full height of the container */
+    object-fit: cover; /* Ensure that the video content scales to fill the player */
 }
 
 /* You can keep your existing styles for other elements */
@@ -20,11 +21,17 @@ body {
     }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+.btn:focus, ..btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
     position: relative;
     min-height: 100%;
+}
+
+/* Style for the gameCanvas */
+.gameCanvas {
+    /* Add any styles you need for the gameCanvas */
+    background-color: red; /* For demonstration */
 }
