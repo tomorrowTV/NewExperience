@@ -10,10 +10,8 @@ document.addEventListener('DOMContentLoaded', function () {
         // Add more video filenames as needed
     ];
 
-    // Create a single video element
-    const videoElement = document.createElement('video');
-    videoElement.id = 'videoPlayer';
-    document.body.appendChild(videoElement);
+    // Create an array to hold video player elements
+    const videoPlayers = [];
 
     // Create an audio element and set its source
     const audioPlayer = document.createElement('audio');
@@ -39,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
         preloadVideo.src = videoArray[index];
         preloadVideo.preload = 'auto';
         preloadVideo.load();
+        videoPlayers.push(preloadVideo);
 
         // Once the video is loaded, add it to the body and hide it
         preloadVideo.addEventListener('loadeddata', () => {
@@ -54,21 +53,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to play video by index and synchronize with the audio
     function playVideoByIndex(index) {
-        videoElement.pause();
-        videoElement.src = videoArray[index];
-        videoElement.currentTime = audioPlayer.currentTime; // Synchronize with audio time
+        videoPlayers.forEach(player => {
+            player.pause();
+            player.src = videoArray[index];
+            player.currentTime = audioPlayer.currentTime; // Synchronize with audio time
 
-        // Add an event listener to restart video playback when it ends
-        videoElement.addEventListener('ended', () => {
-            videoElement.currentTime = 0; // Reset video to the beginning
-            videoElement.play(); // Start video playback again
-        });
-
-        videoElement.play()
-            .catch(error => {
-                // Handle any video playback errors here
-                console.error('Video playback error:', error.message);
+            // Add an event listener to restart video playback when it ends
+            player.addEventListener('ended', () => {
+                player.currentTime = 0; // Reset video to the beginning
+                player.play(); // Start video playback again
             });
+
+            player.play()
+                .catch(error => {
+                    // Handle any video playback errors here
+                    console.error('Video playback error:', error.message);
+                });
+        });
         currentVideoIndex = index;
     }
 
