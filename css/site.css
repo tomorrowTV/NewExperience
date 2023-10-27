@@ -1,36 +1,22 @@
-/* Reset margin and padding for the body */
-body {
-    margin: 0;
-    padding: 0;
-    background-color: black; /* Set the background color to black */
-}
-
-/* Center the container vertically and horizontally */
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-/* Style for the gameCanvas */
+/* CSS for gameCanvas and videoPlayer */
 #gameCanvas {
     width: 100%;
-    height: auto; /* Maintain aspect ratio */
+    height: 540px; /* Adjust the height as needed */
     background-color: transparent; /* Set the canvas background color */
 }
 
-/* Style for the videoPlayer */
 #videoPlayer {
-    max-width: 100%;
+    width: 100%;
     height: auto; /* Maintain the video's aspect ratio */
+    display: block; /* Ensure it's a block element for proper layout */
     object-fit: center; /* Center the video content within the videoPlayer container */
-    display: block;
 }
 
 /* You can keep your existing styles for other elements */
 html {
     font-size: 14px;
+    background-color: black; /* Set the background color to black */
+    margin-bottom: 60px;
 }
 
 @media (min-width: 768px) {
