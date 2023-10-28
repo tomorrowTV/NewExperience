@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const videoElement = document.createElement('video');
     videoElement.id = 'videoPlayer';
     videoElement.controls = true; // Add controls for user interaction
+    videoElement.setAttribute('playsinline', ''); // Add playsinline attribute
     videoPlayerContainer.appendChild(videoElement);
 
 
