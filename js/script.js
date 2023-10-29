@@ -29,27 +29,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let currentVideoIndex = 0;
     let audioStarted = false;
-    let videosLoadedCount = 0;
+    let videosPreloadedCount = 0;
     let startDelay = 2000; // Set the delay in milliseconds (2 seconds)
 
     function preloadVideoByIndex(index) {
         const preloadVideo = document.createElement('video');
         preloadVideo.src = videoArray[index];
         preloadVideo.preload = 'auto';
-        preloadVideo.load();
 
-        preloadVideo.addEventListener('loadeddata', () => {
-            // Remove or hide the preload video
-            document.body.removeChild(preloadVideo);
+        preloadVideo.addEventListener('canplaythrough', () => {
+            // Hide the preload video
+            preloadVideo.style.display = 'none';
 
-            videosLoadedCount++;
-
-            if (videosLoadedCount === 1) {
+            videosPreloadedCount++;
+            if (videosPreloadedCount === videoArray.length && !audioStarted) {
                 setTimeout(() => {
                     startAudio();
                 }, startDelay);
             }
         });
+
+        document.body.appendChild(preloadVideo);
     }
 
     function playVideoByIndex(index) {
