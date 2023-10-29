@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
     videoElement.id = 'videoPlayer';
     videoElement.controls = true; // Add controls for user interaction
     videoElement.setAttribute('playsinline', ''); // Add playsinline attribute
+    videoElement.preload = 'auto'; // Set preload attribute to 'auto' for video
     videoPlayerContainer.appendChild(videoElement);
 
     const audioPlayer = document.createElement('audio');
