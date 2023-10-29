@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Define an array of video filenames (without the path)
     const videoArray = [
         'wwwroot/videos/SW1.mp4',
         'wwwroot/videos/SW2.mp4',
@@ -17,75 +16,68 @@ document.addEventListener('DOMContentLoaded', function () {
     videoElement.setAttribute('playsinline', ''); // Add playsinline attribute
     videoPlayerContainer.appendChild(videoElement);
 
-    // Create an audio element and set its source
     const audioPlayer = document.createElement('audio');
-    audioPlayer.src = 'wwwroot/assets/Song.m4a'; // Replace with the actual audio file path
+    audioPlayer.src = 'wwwroot/assets/Song.m4a';
     audioPlayer.preload = 'auto';
     audioPlayer.load();
     document.body.appendChild(audioPlayer);
 
-    // Create the canvas element with specified dimensions
     const canvas = document.createElement('canvas');
     canvas.width = 960;
     canvas.height = 540;
     document.body.appendChild(canvas);
 
-    // Variables to track the currently playing video index and the timer interval
     let currentVideoIndex = 0;
     const timerInterval = 100; // 100 ms
-    let audioStarted = false; // Track whether audio has been started
+    let audioStarted = false;
 
-    // Function to preload a video by index
-    function preloadVideoByIndex(index) {
+    let preloadedVideoIndex = 1; // Start with the second video
+
+    function preloadNextVideo() {
         const preloadVideo = document.createElement('video');
-        preloadVideo.src = videoArray[index];
+        preloadVideo.src = videoArray[preloadedVideoIndex];
         preloadVideo.preload = 'auto';
         preloadVideo.load();
-        return preloadVideo;
+
+        preloadVideo.addEventListener('loadeddata', () => {
+            preloadVideo.style.display = 'none';
+            document.body.appendChild(preloadVideo);
+            preloadedVideoIndex = (preloadedVideoIndex + 1) % videoArray.length;
+        });
     }
 
-    // An array to store preloaded video elements
-    const preloadedVideos = videoArray.map((_, index) => preloadVideoByIndex(index));
-
-    // Function to play video by index and synchronize with the audio
     function playVideoByIndex(index) {
         videoElement.pause();
-        videoElement.src = preloadedVideos[index].src; // Use the preloaded video source
-        videoElement.currentTime = audioPlayer.currentTime; // Synchronize with audio time
+        videoElement.src = videoArray[index];
+        videoElement.currentTime = audioPlayer.currentTime;
 
-        // Add an event listener to restart video playback when it ends
         videoElement.addEventListener('ended', () => {
-            videoElement.currentTime = 0; // Reset video to the beginning
-            videoElement.play(); // Start video playback again
+            videoElement.currentTime = 0;
+            videoElement.play();
         });
 
-        videoElement.play()
-            .catch(error => {
-                // Handle any video playback errors here
-                console.error('Video playback error:', error.message);
-            });
+        videoElement.play().catch(error => {
+            console.error('Video playback error:', error.message);
+        });
 
         currentVideoIndex = index;
     }
 
-    // Function to start audio playback
     function startAudio() {
-        audioPlayer.load(); // Load the audio
-        audioPlayer.play()
-            .catch(error => {
-                // Handle any audio playback errors here
-                console.error('Audio playback error:', error.message);
-            });
+        audioPlayer.load();
+        audioPlayer.play().catch(error => {
+            console.error('Audio playback error:', error.message);
+        });
     }
 
-    // Add a click event listener to start audio and video on the first click
     document.addEventListener('click', () => {
         if (!audioStarted) {
-            startAudio(); // Start audio on the first click
-            audioStarted = true; // Set the flag to true to indicate audio has started
+            startAudio();
+            audioStarted = true;
         }
 
         const nextIndex = (currentVideoIndex + 1) % videoArray.length;
         playVideoByIndex(nextIndex);
+        preloadNextVideo();
     });
 });
