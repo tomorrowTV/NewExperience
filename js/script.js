@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function () {
     videoElement.setAttribute('playsinline', ''); // Add playsinline attribute
     videoPlayerContainer.appendChild(videoElement);
 
-
     // Create an audio element and set its source
     const audioPlayer = document.createElement('audio');
     audioPlayer.src = 'wwwroot/assets/Song.m4a'; // Replace with the actual audio file path
@@ -36,23 +35,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const timerInterval = 100; // 100 ms
     let audioStarted = false; // Track whether audio has been started
 
-    // Function to preload a video by index
-    function preloadVideoByIndex(index) {
+    // Function to preload the next video in the array
+    function preloadNextVideo() {
+        const nextIndex = (currentVideoIndex + 1) % videoArray.length;
         const preloadVideo = document.createElement('video');
-        preloadVideo.src = videoArray[index];
+        preloadVideo.src = videoArray[nextIndex];
         preloadVideo.preload = 'auto';
         preloadVideo.load();
-
-        // Once the video is loaded, add it to the body and hide it
-        preloadVideo.addEventListener('loadeddata', () => {
-            preloadVideo.style.display = 'none';
-            document.body.appendChild(preloadVideo);
-        });
-    }
-
-    // Preload all videos in the array
-    for (let i = 0; i < videoArray.length; i++) {
-        preloadVideoByIndex(i);
     }
 
     // Function to play video by index and synchronize with the audio
@@ -65,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
         videoElement.addEventListener('ended', () => {
             videoElement.currentTime = 0; // Reset video to the beginning
             videoElement.play(); // Start video playback again
+            preloadNextVideo(); // Preload the next video
         });
 
         videoElement.play()
@@ -72,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Handle any video playback errors here
                 console.error('Video playback error:', error.message);
             });
+
         currentVideoIndex = index;
     }
 
