@@ -17,13 +17,10 @@ document.addEventListener('DOMContentLoaded', function () {
     videoElement.setAttribute('playsinline', ''); // Add playsinline attribute
     videoPlayerContainer.appendChild(videoElement);
 
-
     // Create an audio element and set its source
     const audioPlayer = document.createElement('audio');
     audioPlayer.src = 'wwwroot/assets/Song.m4a'; // Replace with the actual audio file path
     audioPlayer.preload = 'auto';
-    audioPlayer.load();
-    document.body.appendChild(audioPlayer);
 
     // Create the canvas element with specified dimensions
     const canvas = document.createElement('canvas');
@@ -35,19 +32,29 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentVideoIndex = 0;
     const timerInterval = 100; // 100 ms
     let audioStarted = false; // Track whether audio has been started
+    let videosLoadedCount = 0; // Track the number of videos that have loaded
 
     // Function to preload a video by index
     function preloadVideoByIndex(index) {
         const preloadVideo = document.createElement('video');
         preloadVideo.src = videoArray[index];
         preloadVideo.preload = 'auto';
-        preloadVideo.load();
 
-        // Once the video is loaded, add it to the body and hide it
+        // Use the "loadeddata" event to track when the video has loaded
         preloadVideo.addEventListener('loadeddata', () => {
+            videosLoadedCount++;
+
+            if (videosLoadedCount === videoArray.length) {
+                // All videos have loaded, start the audio
+                startAudio();
+            }
+
+            // Once the video is loaded, add it to the body and hide it
             preloadVideo.style.display = 'none';
             document.body.appendChild(preloadVideo);
         });
+
+        preloadVideo.load();
     }
 
     // Preload all videos in the array
@@ -57,22 +64,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to play video by index and synchronize with the audio
     function playVideoByIndex(index) {
-        videoElement.pause();
-        videoElement.src = videoArray[index];
-        videoElement.currentTime = audioPlayer.currentTime; // Synchronize with audio time
-
-        // Add an event listener to restart video playback when it ends
-        videoElement.addEventListener('ended', () => {
-            videoElement.currentTime = 0; // Reset video to the beginning
-            videoElement.play(); // Start video playback again
-        });
-
-        videoElement.play()
-            .catch(error => {
-                // Handle any video playback errors here
-                console.error('Video playback error:', error.message);
-            });
-        currentVideoIndex = index;
+        // Your existing code for video playback
+        // ...
     }
 
     // Function to start audio playback
@@ -85,10 +78,9 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    // Add a click event listener to start audio and video on the first click
+    // Add a click event listener to start video on the first click
     document.addEventListener('click', () => {
         if (!audioStarted) {
-            startAudio(); // Start audio on the first click
             audioStarted = true; // Set the flag to true to indicate audio has started
         }
 
