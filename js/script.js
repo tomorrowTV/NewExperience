@@ -39,7 +39,6 @@ document.addEventListener('DOMContentLoaded', function () {
         preloadVideo.load();
 
         preloadVideo.addEventListener('loadeddata', () => {
-            preloadVideo.style.display = 'none';
             document.body.appendChild(preloadVideo);
             videosLoadedCount++;
 
@@ -61,30 +60,12 @@ document.addEventListener('DOMContentLoaded', function () {
             videoElement.play();
         });
 
-        videoElement.addEventListener('play', () => {
-            preloadNextVideo(index);
-        });
-
         videoElement.play()
             .catch(error => {
                 console.error('Video playback error:', error.message);
             });
 
         currentVideoIndex = index;
-    }
-
-    function preloadNextVideo(index) {
-        const nextIndex = (index + 1) % videoArray.length;
-        const preloadVideo = document.createElement('video');
-        preloadVideo.src = videoArray[nextIndex];
-        preloadVideo.preload = 'auto';
-
-        preloadVideo.addEventListener('canplaythrough', () => {
-            preloadVideo.style.display = 'none';
-            document.body.appendChild(preloadVideo);
-        });
-
-        preloadVideo.load();
     }
 
     function startAudio() {
@@ -102,5 +83,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const nextIndex = (currentVideoIndex + 1) % videoArray.length;
         playVideoByIndex(nextIndex);
+        preloadVideoByIndex(nextIndex);
     });
 });
