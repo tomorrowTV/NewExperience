@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
     const videoArray = [
-        'SW1.mp4',
-        'SW2.mp4',
-        'SW3.mp4',
-        'SW4.mp4',
-        'SW5.mp4',
-        'SW6.mp4',
+        'wwwroot/videos/SW1.mp4',
+        'wwwroot/videos/SW2.mp4',
+        'wwwroot/videos/SW3.mp4',
+        'wwwroot/videos/SW4.mp4',
+        'wwwroot/videos/SW5.mp4',
+        'wwwroot/videos/SW6.mp4',
         // Add more video filenames as needed
     ];
 
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     videoPlayerContainer.appendChild(videoElement);
 
     const audioPlayer = document.createElement('audio');
-    audioPlayer.src = 'Song.m4a'; // Assuming the audio file is in the same directory
+    audioPlayer.src = 'wwwroot/assets/Song.m4a'; // Assuming the audio file is in the same directory
     audioPlayer.preload = 'auto';
     audioPlayer.load();
     document.body.appendChild(audioPlayer);
