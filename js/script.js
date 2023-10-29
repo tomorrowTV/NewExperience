@@ -19,8 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const audioPlayer = document.createElement('audio');
     audioPlayer.src = 'wwwroot/assets/Song.m4a'; // Replace with the actual audio file path
     audioPlayer.preload = 'auto';
-    audioPlayer.load();
-    document.body.appendChild(audioPlayer);
 
     const canvas = document.createElement('canvas');
     canvas.width = 960;
@@ -29,33 +27,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let currentVideoIndex = 0;
     let audioStarted = false;
-    let videosPreloadedCount = 0;
-    let startDelay = 2000; // Set the delay in milliseconds (2 seconds)
 
     function preloadVideoByIndex(index) {
         const preloadVideo = document.createElement('video');
         preloadVideo.src = videoArray[index];
         preloadVideo.preload = 'auto';
-
-        preloadVideo.addEventListener('canplaythrough', () => {
-            // Hide the preload video
-            preloadVideo.style.display = 'none';
-
-            videosPreloadedCount++;
-            if (videosPreloadedCount === videoArray.length && !audioStarted) {
-                setTimeout(() => {
-                    startAudio();
-                }, startDelay);
-            }
-        });
-
-        document.body.appendChild(preloadVideo);
+        preloadVideo.load();
     }
 
     function playVideoByIndex(index) {
         videoElement.pause();
         videoElement.src = videoArray[index];
-        videoElement.currentTime = audioPlayer.currentTime;
+        videoElement.currentTime = 0;
 
         videoElement.addEventListener('ended', () => {
             videoElement.currentTime = 0;
@@ -81,10 +64,11 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('click', () => {
         if (!audioStarted) {
             audioStarted = true;
+            startAudio();
         }
 
         const nextIndex = (currentVideoIndex + 1) % videoArray.length;
-        playVideoByIndex(nextIndex);
         preloadVideoByIndex(nextIndex);
+        playVideoByIndex(nextIndex);
     });
 });
