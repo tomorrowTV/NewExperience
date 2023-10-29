@@ -35,26 +35,28 @@ document.addEventListener('DOMContentLoaded', function () {
     const timerInterval = 100; // 100 ms
     let audioStarted = false; // Track whether audio has been started
 
-    // Function to preload the next video in the array
-    function preloadNextVideo() {
-        const nextIndex = (currentVideoIndex + 1) % videoArray.length;
+    // Function to preload a video by index
+    function preloadVideoByIndex(index) {
         const preloadVideo = document.createElement('video');
-        preloadVideo.src = videoArray[nextIndex];
+        preloadVideo.src = videoArray[index];
         preloadVideo.preload = 'auto';
         preloadVideo.load();
+        return preloadVideo;
     }
+
+    // An array to store preloaded video elements
+    const preloadedVideos = videoArray.map((_, index) => preloadVideoByIndex(index));
 
     // Function to play video by index and synchronize with the audio
     function playVideoByIndex(index) {
         videoElement.pause();
-        videoElement.src = videoArray[index];
+        videoElement.src = preloadedVideos[index].src; // Use the preloaded video source
         videoElement.currentTime = audioPlayer.currentTime; // Synchronize with audio time
 
         // Add an event listener to restart video playback when it ends
         videoElement.addEventListener('ended', () => {
             videoElement.currentTime = 0; // Reset video to the beginning
             videoElement.play(); // Start video playback again
-            preloadNextVideo(); // Preload the next video
         });
 
         videoElement.play()
