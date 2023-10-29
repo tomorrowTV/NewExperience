@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
         preloadVideo.preload = 'auto';
 
         preloadVideo.addEventListener('canplaythrough', () => {
-            preloadVideo.style display = 'none';
+            preloadVideo.style.display = 'none';
             document.body.appendChild(preloadVideo);
         });
 
