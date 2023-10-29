@@ -42,16 +42,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Use the "canplaythrough" event to track when the video is ready to play
         preloadVideo.addEventListener('canplaythrough', () => {
-            videosLoadedCount++;
-
-            if (videosLoadedCount === videoArray.length) {
-                // All videos have loaded, start the audio
-                startAudio();
-            }
-
-            // Once the video is ready, add it to the body and hide it
             preloadVideo.style.display = 'none';
             document.body.appendChild(preloadVideo);
+            
+            // Increment the loaded count and check if all videos are loaded
+            videosLoadedCount++;
+            if (videosLoadedCount === videoArray.length) {
+                startAudio(); // Start audio when all videos are preloaded
+            }
         });
 
         preloadVideo.load();
@@ -98,6 +96,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Add a click event listener to start video on the first click
     document.addEventListener('click', () => {
+        if (!audioStarted) {
+            startAudio(); // Start audio on the first click
+            audioStarted = true; // Set the flag to true to indicate audio has started
+        }
+
         const nextIndex = (currentVideoIndex + 1) % videoArray.length;
         playVideoByIndex(nextIndex);
     });
