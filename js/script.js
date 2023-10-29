@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let preloadedVideoIndex = 1; // Start with the second video
 
     function preloadNextVideo() {
-        const preloadVideo = document.createElement('video');
+        const preloadVideo = new Audio();
         preloadVideo.src = videoArray[preloadedVideoIndex];
         preloadVideo.preload = 'auto';
         preloadVideo.load();
@@ -50,6 +50,11 @@ document.addEventListener('DOMContentLoaded', function () {
         videoElement.pause();
         videoElement.src = videoArray[index];
         videoElement.currentTime = audioPlayer.currentTime;
+
+        videoElement.addEventListener('timeupdate', () => {
+            // Update audio playback time to match video time
+            audioPlayer.currentTime = videoElement.currentTime;
+        });
 
         videoElement.addEventListener('ended', () => {
             videoElement.currentTime = 0;
