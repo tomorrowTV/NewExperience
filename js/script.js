@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentVideoIndex = 0;
     const timerInterval = 100; // 100 ms
     let audioStarted = false; // Track whether audio has been started
+    let videosLoadedCount = 0; // Track the number of videos that have loaded
 
     // Function to preload a video by index
     function preloadVideoByIndex(index) {
@@ -39,8 +40,16 @@ document.addEventListener('DOMContentLoaded', function () {
         preloadVideo.src = videoArray[index];
         preloadVideo.preload = 'auto';
 
-        // Once the video is loaded, add it to the body and hide it
-        preloadVideo.addEventListener('loadeddata', () => {
+        // Use the "canplaythrough" event to track when the video is ready to play
+        preloadVideo.addEventListener('canplaythrough', () => {
+            videosLoadedCount++;
+
+            if (videosLoadedCount === videoArray.length) {
+                // All videos have loaded, start the audio
+                startAudio();
+            }
+
+            // Once the video is ready, add it to the body and hide it
             preloadVideo.style.display = 'none';
             document.body.appendChild(preloadVideo);
         });
