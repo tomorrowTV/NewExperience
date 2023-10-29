@@ -39,7 +39,9 @@ document.addEventListener('DOMContentLoaded', function () {
         preloadVideo.load();
 
         preloadVideo.addEventListener('loadeddata', () => {
-            document.body.appendChild(preloadVideo);
+            // Remove or hide the preload video
+            document.body.removeChild(preloadVideo);
+
             videosLoadedCount++;
 
             if (videosLoadedCount === 1) {
