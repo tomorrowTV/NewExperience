@@ -12,9 +12,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const videoPlayerContainer = document.getElementById('videoPlayerContainer');
     const videoElement = document.createElement('video');
     videoElement.id = 'videoPlayer';
-    videoElement.controls = true; // Add controls for user interaction
-    videoElement.setAttribute('playsinline', ''); // Add playsinline attribute
-    videoElement.preload = 'auto'; // Set preload attribute to 'auto' for video
+    videoElement.controls = true;
+    videoElement.setAttribute('playsinline', '');
+    videoElement.preload = 'auto';
     videoPlayerContainer.appendChild(videoElement);
 
     const audioPlayer = document.createElement('audio');
@@ -34,18 +34,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let preloadedVideoIndex = 1; // Start with the second video
 
-    function preloadNextVideo() {
-        const preloadVideo = new Audio();
-        preloadVideo.src = videoArray[preloadedVideoIndex];
-        preloadVideo.preload = 'auto';
-        preloadVideo.load();
-
-        preloadVideo.addEventListener('loadeddata', () => {
-            preloadVideo.style.display = 'none';
-            document.body.appendChild(preloadVideo);
-            preloadedVideoIndex = (preloadedVideoIndex + 1) % videoArray.length;
-        });
-    }
+    // Create a new Web Worker for preloading tasks
+    const preloadWorker = new Worker('preloadWorker.js');
 
     function playVideoByIndex(index) {
         videoElement.pause();
@@ -84,6 +74,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const nextIndex = (currentVideoIndex + 1) % videoArray.length;
         playVideoByIndex(nextIndex);
-        preloadNextVideo();
+
+        // Notify the preloadWorker to preload the next video
+        preloadWorker.postMessage(videoArray[nextIndex]);
     });
 });
