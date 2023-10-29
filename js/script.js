@@ -12,14 +12,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const videoPlayerContainer = document.getElementById('videoPlayerContainer');
     const videoElement = document.createElement('video');
     videoElement.id = 'videoPlayer';
-    videoElement.controls = true; // Add controls for user interaction
-    videoElement.setAttribute('playsinline', ''); // Add playsinline attribute
+    videoElement.controls = true;
+    videoElement.setAttribute('playsinline', '');
     videoPlayerContainer.appendChild(videoElement);
 
     const audioPlayer = document.createElement('audio');
     audioPlayer.src = 'wwwroot/assets/Song.m4a';
     audioPlayer.preload = 'auto';
     audioPlayer.load();
+    audioPlayer.currentTime = 0; // Ensure audio starts from the beginning
     document.body.appendChild(audioPlayer);
 
     const canvas = document.createElement('canvas');
@@ -28,61 +29,43 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.appendChild(canvas);
 
     let currentVideoIndex = 0;
-    const timerInterval = 100; // 100 ms
     let audioStarted = false;
 
-    let preloadedVideoIndex = 1; // Start with the second video
-
-    function preloadNextVideo() {
+    function preloadVideo(index) {
         const preloadVideo = new Audio();
-        preloadVideo.src = videoArray[preloadedVideoIndex];
+        preloadVideo.src = videoArray[index];
         preloadVideo.preload = 'auto';
         preloadVideo.load();
-
-        preloadVideo.addEventListener('loadeddata', () => {
-            preloadVideo.style.display = 'none';
-            document.body.appendChild(preloadVideo);
-            preloadedVideoIndex = (preloadedVideoIndex + 1) % videoArray.length;
-        });
     }
 
     function playVideoByIndex(index) {
         videoElement.pause();
         videoElement.src = videoArray[index];
-        videoElement.currentTime = audioPlayer.currentTime;
 
-        videoElement.addEventListener('timeupdate', () => {
-            // Update audio playback time to match video time
+        videoElement.addEventListener('canplay', () => {
+            // When the video is ready, play both the video and audio
+            videoElement.play().catch(error => {
+                console.error('Video playback error:', error.message);
+            });
+
+            if (!audioStarted) {
+                audioPlayer.play().catch(error => {
+                    console.error('Audio playback error:', error.message);
+                });
+                audioStarted = true;
+            }
+
             audioPlayer.currentTime = videoElement.currentTime;
         });
 
         videoElement.addEventListener('ended', () => {
-            videoElement.currentTime = 0;
-            videoElement.play();
-        });
-
-        videoElement.play().catch(error => {
-            console.error('Video playback error:', error.message);
-        });
-
-        currentVideoIndex = index;
-    }
-
-    function startAudio() {
-        audioPlayer.load();
-        audioPlayer.play().catch(error => {
-            console.error('Audio playback error:', error.message);
+            currentVideoIndex = (currentVideoIndex + 1) % videoArray.length;
+            preloadVideo(currentVideoIndex);
+            playVideoByIndex(currentVideoIndex);
         });
     }
 
-    document.addEventListener('click', () => {
-        if (!audioStarted) {
-            startAudio();
-            audioStarted = true;
-        }
-
-        const nextIndex = (currentVideoIndex + 1) % videoArray.length;
-        playVideoByIndex(nextIndex);
-        preloadNextVideo();
-    });
+    // Initial video preload
+    preloadVideo(currentVideoIndex);
+    playVideoByIndex(currentVideoIndex);
 });
