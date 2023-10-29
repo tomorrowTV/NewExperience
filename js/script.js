@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function playVideoByIndex(index) {
         videoElement.pause();
         videoElement.src = videoArray[index];
-        videoElement.currentTime = 0;
+        videoElement.currentTime = audioPlayer.currentTime;
 
         videoElement.addEventListener('ended', () => {
             videoElement.currentTime = 0;
@@ -68,7 +68,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const nextIndex = (currentVideoIndex + 1) % videoArray.length;
-        preloadVideoByIndex(nextIndex);
         playVideoByIndex(nextIndex);
     });
+
+    preloadVideoByIndex(0); // Preload the first video
 });
