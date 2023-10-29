@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentVideoIndex = 0;
     const timerInterval = 100; // 100 ms
     let audioStarted = false; // Track whether audio has been started
-    let videosLoadedCount = 0; // Track the number of videos that have loaded
 
     // Function to preload a video by index
     function preloadVideoByIndex(index) {
@@ -40,16 +39,8 @@ document.addEventListener('DOMContentLoaded', function () {
         preloadVideo.src = videoArray[index];
         preloadVideo.preload = 'auto';
 
-        // Use the "loadeddata" event to track when the video has loaded
+        // Once the video is loaded, add it to the body and hide it
         preloadVideo.addEventListener('loadeddata', () => {
-            videosLoadedCount++;
-
-            if (videosLoadedCount === videoArray.length) {
-                // All videos have loaded, start the audio
-                startAudio();
-            }
-
-            // Once the video is loaded, add it to the body and hide it
             preloadVideo.style.display = 'none';
             document.body.appendChild(preloadVideo);
         });
@@ -64,26 +55,40 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to play video by index and synchronize with the audio
     function playVideoByIndex(index) {
-        // Your existing code for video playback
-        // ...
-    }
+        videoElement.pause();
+        videoElement.src = videoArray[index];
+        videoElement.currentTime = audioPlayer.currentTime; // Synchronize with audio time
 
-    // Function to start audio playback
-    function startAudio() {
-        audioPlayer.load(); // Load the audio
-        audioPlayer.play()
+        // Add an event listener to restart video playback when it ends
+        videoElement.addEventListener('ended', () => {
+            videoElement.currentTime = 0; // Reset video to the beginning
+            videoElement.play(); // Start video playback again
+        });
+
+        // Add an event listener to start audio playback when the video is playing
+        videoElement.addEventListener('play', () => {
+            if (!audioStarted) {
+                audioPlayer.load(); // Load the audio
+                audioPlayer.play()
+                    .catch(error => {
+                        // Handle any audio playback errors here
+                        console.error('Audio playback error:', error.message);
+                    });
+                audioStarted = true; // Set the flag to true to indicate audio has started
+            }
+        });
+
+        videoElement.play()
             .catch(error => {
-                // Handle any audio playback errors here
-                console.error('Audio playback error:', error.message);
+                // Handle any video playback errors here
+                console.error('Video playback error:', error.message);
             });
+
+        currentVideoIndex = index;
     }
 
     // Add a click event listener to start video on the first click
     document.addEventListener('click', () => {
-        if (!audioStarted) {
-            audioStarted = true; // Set the flag to true to indicate audio has started
-        }
-
         const nextIndex = (currentVideoIndex + 1) % videoArray.length;
         playVideoByIndex(nextIndex);
     });
