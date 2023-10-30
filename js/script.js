@@ -11,6 +11,9 @@
         // Add more video filenames as needed
     ];
 
+    // Notify the preloadWorker to preload the videoArray
+    preloadWorker.postMessage(videoArray);
+
     const videoPlayerContainer = document.getElementById('videoPlayerContainer');
     const videoElement = document.createElement('video');
     videoElement.id = 'videoPlayer';
