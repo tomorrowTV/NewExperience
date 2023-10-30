@@ -1,17 +1,30 @@
 self.addEventListener('message', event => {
-    const videoFileName = event.data;
+    const videoFileNames = event.data;
 
-    // Construct the full path to the video asset within your project
-    const videoPath = 'wwwroot/videos/' + videoFileName;
+    // Array to hold preloaded video elements
+    const preloadedVideos = [];
 
-    // Preload the video by creating an HTMLVideoElement
-    const preloadVideo = document.createElement('video');
-    preloadVideo.src = videoPath;
-    preloadVideo.preload = 'auto';
+    // Function to preload a single video
+    function preloadVideo(videoFileName, index) {
+        const videoPath = 'wwwroot/videos/' + videoFileName;
+        const preloadVideo = document.createElement('video');
+        preloadVideo.src = videoPath;
+        preloadVideo.preload = 'auto';
 
-    // Listen for the 'loadeddata' event to know when the video is preloaded
-    preloadVideo.addEventListener('loadeddata', () => {
-        // Post the preloaded video element back to the main thread
-        self.postMessage(preloadVideo);
+        preloadVideo.addEventListener('loadeddata', () => {
+            // Add the preloaded video element to the array
+            preloadedVideos[index] = preloadVideo;
+
+            // Check if all videos are preloaded
+            if (preloadedVideos.length === videoFileNames.length) {
+                // Post all preloaded video elements back to the main thread
+                self.postMessage(preloadedVideos);
+            }
+        });
+    }
+
+    // Preload all videos in parallel
+    videoFileNames.forEach((videoFileName, index) => {
+        preloadVideo(videoFileName, index);
     });
 });
