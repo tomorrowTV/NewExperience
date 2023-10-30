@@ -14,11 +14,10 @@ document.addEventListener('DOMContentLoaded', function () {
     videoElement.id = 'videoPlayer';
     videoElement.controls = true; // Add controls for user interaction
     videoElement.setAttribute('playsinline', ''); // Add playsinline attribute
-    videoElement.preload = 'auto'; // Set preload attribute to 'auto' for video
     videoPlayerContainer.appendChild(videoElement);
 
     const audioPlayer = document.createElement('audio');
-    audioPlayer.src = 'wwwroot/assets/Song.m4a'; // Assuming the audio file is in the same directory
+    audioPlayer.src = 'wwwroot/assets/Song.m4a';
     audioPlayer.preload = 'auto';
     audioPlayer.load();
     document.body.appendChild(audioPlayer);
@@ -29,15 +28,28 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.appendChild(canvas);
 
     let currentVideoIndex = 0;
+    let preloadedVideos = new Set();
     const timerInterval = 100; // 100 ms
     let audioStarted = false;
 
-    let preloadedVideoIndex = 1; // Start with the second video
-
-    // Create a new Web Worker for preloading tasks
-    const preloadWorker = new Worker('preloadWorker.js');
+    function preloadNextVideo() {
+        const preloadIndex = (currentVideoIndex + 1) % videoArray.length;
+        const preloadVideo = new Video();
+        preloadVideo.src = videoArray[preloadIndex];
+        preloadVideo.preload = 'auto';
+        preloadVideo.load();
+        preloadVideo.addEventListener('canplaythrough', () => {
+            preloadedVideos.add(preloadIndex);
+        });
+    }
 
     function playVideoByIndex(index) {
+        if (!preloadedVideos.has(index)) {
+            // Video not preloaded yet, wait for it to be preloaded.
+            setTimeout(() => playVideoByIndex(index), 100);
+            return;
+        }
+
         videoElement.pause();
         videoElement.src = videoArray[index];
         videoElement.currentTime = audioPlayer.currentTime;
@@ -57,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         currentVideoIndex = index;
+        preloadNextVideo();
     }
 
     function startAudio() {
@@ -66,14 +79,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Message event handler for the preloadWorker
-    preloadWorker.onmessage = (event) => {
-        // Handle the preloaded video element
-        const preloadedVideoElement = event.data;
-
-        // You can use this preloadedVideoElement in your application as needed
-    };
-
     document.addEventListener('click', () => {
         if (!audioStarted) {
             startAudio();
@@ -82,8 +87,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const nextIndex = (currentVideoIndex + 1) % videoArray.length;
         playVideoByIndex(nextIndex);
-
-        // Notify the preloadWorker to preload the next video
-        preloadWorker.postMessage(videoArray[nextIndex]);
     });
 });
