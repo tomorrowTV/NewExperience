@@ -1,13 +1,12 @@
 self.addEventListener('message', event => {
-    const videoFileNames = event.data;
+    const videoPaths = event.data;
 
-    if (Array.isArray(videoFileNames)) {
+    if (Array.isArray(videoPaths)) {
         // Array to hold preloaded video elements
         const preloadedVideos = [];
 
         // Function to preload a single video
-        function preloadVideo(videoFileName, index) {
-            const videoPath = 'wwwroot/videos/' + videoFileName;
+        function preloadVideo(videoPath, index) {
             const preloadVideo = document.createElement('video');
             preloadVideo.src = videoPath;
             preloadVideo.preload = 'auto';
@@ -17,7 +16,7 @@ self.addEventListener('message', event => {
                 preloadedVideos[index] = preloadVideo;
 
                 // Check if all videos are preloaded
-                if (preloadedVideos.length === videoFileNames.length) {
+                if (preloadedVideos.length === videoPaths.length) {
                     // Post all preloaded video elements back to the main thread
                     self.postMessage(preloadedVideos);
                 }
@@ -25,10 +24,10 @@ self.addEventListener('message', event => {
         }
 
         // Preload all videos in parallel
-        videoFileNames.forEach((videoFileName, index) => {
-            preloadVideo(videoFileName, index);
+        videoPaths.forEach((videoPath, index) => {
+            preloadVideo(videoPath, index);
         });
     } else {
-        console.error('Invalid videoFileNames data:', videoFileNames);
+        console.error('Invalid videoPaths data:', videoPaths);
     }
 });
