@@ -1,4 +1,6 @@
-document.addEventListener('DOMContentLoaded', function () {
+    const preloadWorker = new Worker('preloadWorker.js'); // Create a new Web Worker for preloading tasks
+
+    document.addEventListener('DOMContentLoaded', function () {
     const videoArray = [
         'wwwroot/videos/SW1.mp4',
         'wwwroot/videos/SW2.mp4',
@@ -33,9 +35,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let audioStarted = false;
 
     let preloadedVideoIndex = 1; // Start with the second video
-
-    // Create a new Web Worker for preloading tasks
-    const preloadWorker = new Worker('preloadWorker.js');
 
     function playVideoByIndex(index) {
         videoElement.pause();
