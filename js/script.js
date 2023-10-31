@@ -1,15 +1,18 @@
-    const preloadWorker = new Worker('preloadWorker.js'); // Create a new Web Worker for preloading tasks
+const preloadWorker = new Worker('preloadWorker.js'); // Create a new Web Worker for preloading tasks
 
-    document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
     const videoArray = [
-        'wwwroot/videos/SW1.mp4',
-        'wwwroot/videos/SW2.mp4',
-        'wwwroot/videos/SW3.mp4',
-        'wwwroot/videos/SW4.mp4',
-        'wwwroot/videos/SW5.mp4',
-        'wwwroot/videos/SW6.mp4',
+        'SW1.mp4',
+        'SW2.mp4',
+        'SW3.mp4',
+        'SW4.mp4',
+        'SW5.mp4',
+        'SW6.mp4',
         // Add more video filenames as needed
     ];
+
+    // Notify the preloadWorker to preload the videoArray
+    preloadWorker.postMessage(videoArray);
 
     const videoPlayerContainer = document.getElementById('videoPlayerContainer');
     const videoElement = document.createElement('video');
@@ -20,15 +23,10 @@
     videoPlayerContainer.appendChild(videoElement);
 
     const audioPlayer = document.createElement('audio');
-    audioPlayer.src = 'wwwroot/assets/Song.m4a'; // Assuming the audio file is in the same directory
+    audioPlayer.src = 'wwwroot/assets/Song.m4a'; // Update this to the relative path of your audio file
     audioPlayer.preload = 'auto';
     audioPlayer.load();
     document.body.appendChild(audioPlayer);
-
-    const canvas = document.createElement('canvas');
-    canvas.width = 960;
-    canvas.height = 540;
-    document.body.appendChild(canvas);
 
     let currentVideoIndex = 0;
     const timerInterval = 100; // 100 ms
@@ -38,7 +36,7 @@
 
     function playVideoByIndex(index) {
         videoElement.pause();
-        videoElement.src = videoArray[index];
+        videoElement.src = 'wwwroot/videos/' + videoArray[index];
         videoElement.currentTime = audioPlayer.currentTime;
 
         videoElement.addEventListener('timeupdate', () => {
