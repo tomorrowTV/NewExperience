@@ -1,30 +1,29 @@
-// preloadWorker.js
 self.addEventListener('message', event => {
     const videoPaths = event.data;
 
     if (Array.isArray(videoPaths)) {
-        // Array to hold preloaded video elements
         const preloadedVideos = [];
 
         // Function to preload a single video
         function preloadVideo(videoPath, index) {
-            const preloadVideo = document.createElement('video');
-            preloadVideo.src = videoPath;
-            preloadVideo.preload = 'auto';
+            fetch(videoPath)
+                .then(response => response.blob())
+                .then(videoBlob => {
+                    const objectURL = URL.createObjectURL(videoBlob);
+                    const preloadVideo = document.createElement('video');
+                    preloadVideo.src = objectURL;
+                    preloadVideo.preload = 'auto';
 
-            preloadVideo.addEventListener('loadeddata', () => {
-                // Add the preloaded video element to the array
-                preloadedVideos[index] = preloadVideo;
+                    preloadVideo.addEventListener('loadeddata', () => {
+                        preloadedVideos[index] = preloadVideo;
 
-                // Check if all videos are preloaded
-                if (preloadedVideos.length === videoPaths.length) {
-                    // Post all preloaded video elements back to the main thread
-                    self.postMessage(preloadedVideos);
-                }
-            });
+                        if (preloadedVideos.length === videoPaths.length) {
+                            self.postMessage(preloadedVideos);
+                        }
+                    });
+                });
         }
 
-        // Preload all videos in parallel
         videoPaths.forEach((videoPath, index) => {
             preloadVideo(videoPath, index);
         });
