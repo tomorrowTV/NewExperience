@@ -11,9 +11,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // Add more video filenames as needed
     ];
 
-    // Notify the preloadWorker to preload the videoArray
-    preloadWorker.postMessage(videoArray);
-
     const videoPlayerContainer = document.getElementById('videoPlayerContainer');
     const videoElement = document.createElement('video');
     videoElement.id = 'videoPlayer';
@@ -27,6 +24,11 @@ document.addEventListener('DOMContentLoaded', function () {
     audioPlayer.preload = 'auto';
     audioPlayer.load();
     document.body.appendChild(audioPlayer);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 960;
+    canvas.height = 540;
+    document.body.appendChild(canvas);
 
     let currentVideoIndex = 0;
     const timerInterval = 100; // 100 ms
@@ -58,13 +60,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function startAudio() {
         audioPlayer.load();
-        audioPlayer.play().catch(function(error) {
+        audioPlayer.play().catch(error => {
             console.error('Audio playback error:', error.message);
         });
     }
 
     // Message event handler for the preloadWorker
-    preloadWorker.onmessage = event => {
+    preloadWorker.onmessage = (event) => {
         // Handle the preloaded video element
         const preloadedVideoElement = event.data;
 
