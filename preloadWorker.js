@@ -9,11 +9,18 @@ self.addEventListener('message', event => {
             fetch(videoPath)
                 .then(response => response.blob())
                 .then(videoBlob => {
-                    preloadedVideos[index] = URL.createObjectURL(videoBlob);
+                    const objectURL = URL.createObjectURL(videoBlob);
+                    const preloadVideo = document.createElement('video');
+                    preloadVideo.src = objectURL;
+                    preloadVideo.preload = 'auto';
 
-                    if (preloadedVideos.length === videoPaths.length) {
-                        self.postMessage(preloadedVideos);
-                    }
+                    preloadVideo.addEventListener('loadeddata', () => {
+                        preloadedVideos[index] = preloadVideo;
+
+                        if (preloadedVideos.length === videoPaths.length) {
+                            self.postMessage(preloadedVideos);
+                        }
+                    });
                 });
         }
 
