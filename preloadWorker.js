@@ -1,29 +1,31 @@
-self.addEventListener('message', event => {
-    const videoPaths = event.data;
+const preloadWorker = new Worker('preloadWorker.js');
 
-    if (Array.isArray(videoPaths)) {
-        const preloadedVideos = [];
+document.addEventListener('DOMContentLoaded', function () {
+    const videoArray = [
+        'SW1.mp4',
+        'SW2.mp4',
+        'SW3.mp4',
+        'SW4.mp4',
+        'SW5.mp4',
+        'SW6.mp4',
+        // Add more video filenames as needed
+    ];
 
-        function preloadVideo(videoPath, index) {
-            fetch(videoPath)
-                .then(response => response.blob())
-                .then(videoBlob => {
-                    const objectURL = URL.createObjectURL(videoBlob);
-                    preloadedVideos[index] = objectURL;
+    preloadWorker.postMessage(videoArray);
 
-                    if (preloadedVideos.length === videoPaths.length) {
-                        self.postMessage(preloadedVideos);
-                    }
-                })
-                .catch(error => {
-                    console.error('Video preload error:', error);
-                });
-        }
+    preloadWorker.onmessage = (event) => {
+        const preloadedVideoUrls = event.data;
 
-        videoPaths.forEach((videoPath, index) => {
-            preloadVideo(videoPath, index);
+        // Loop through preloaded URLs and create video elements
+        preloadedVideoUrls.forEach(url => {
+            const videoElement = document.createElement('video');
+            videoElement.src = url;
+            videoElement.preload = 'auto';
+
+            // Add the video element to the DOM
+            // You can customize the placement in the DOM as needed
+            const videoPlayerContainer = document.getElementById('videoPlayerContainer');
+            videoPlayerContainer.appendChild(videoElement);
         });
-    } else {
-        console.error('Invalid videoPaths data:', videoPaths);
-    }
+    });
 });
