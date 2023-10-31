@@ -4,23 +4,19 @@ self.addEventListener('message', event => {
     if (Array.isArray(videoPaths)) {
         const preloadedVideos = [];
 
-        // Function to preload a single video
         function preloadVideo(videoPath, index) {
-            fetch('wwwroot/videos/' + videoPath) // Adjust the path accordingly
+            fetch(videoPath)
                 .then(response => response.blob())
                 .then(videoBlob => {
                     const objectURL = URL.createObjectURL(videoBlob);
-                    const preloadVideo = document.createElement('video');
-                    preloadVideo.src = objectURL;
-                    preloadVideo.preload = 'auto';
+                    preloadedVideos[index] = objectURL;
 
-                    preloadVideo.addEventListener('loadeddata', () => {
-                        preloadedVideos[index] = preloadVideo;
-
-                        if (preloadedVideos.length === videoPaths.length) {
-                            self.postMessage(preloadedVideos);
-                        }
-                    });
+                    if (preloadedVideos.length === videoPaths.length) {
+                        self.postMessage(preloadedVideos);
+                    }
+                })
+                .catch(error => {
+                    console.error('Video preload error:', error);
                 });
         }
 
