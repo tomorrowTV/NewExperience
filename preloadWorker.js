@@ -15,7 +15,8 @@ self.addEventListener('message', event => {
                     preloadVideo.preload = 'auto';
 
                     preloadVideo.addEventListener('loadeddata', () => {
-                        preloadedVideos[index] = objectURL; // Store the URL, not the video element
+                        // Update preloadedVideos with the video element, not the URL
+                        preloadedVideos[index] = preloadVideo;
 
                         if (preloadedVideos.length === videoPaths.length) {
                             self.postMessage(preloadedVideos);
