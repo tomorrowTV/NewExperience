@@ -1,17 +1,14 @@
 self.addEventListener('message', event => {
     const videoPaths = event.data;
 
-    if (Array.isArray(videoPaths)) {
-        // Log the received video paths to the console for debugging
-        console.log('Received video paths:', videoPaths);
-
+    if (Array.isArray(videoPaths) && videoPaths.every(path => typeof path === 'string')) {
         // Array to hold preloaded video elements
         const preloadedVideos = [];
 
         // Function to preload a single video
         function preloadVideo(videoPath, index) {
             const preloadVideo = document.createElement('video');
-            preloadVideo.src = videoPath;
+            preloadVideo.src = 'wwwroot/videos/' + videoPath; // Adjust the path as needed
             preloadVideo.preload = 'auto';
 
             preloadVideo.addEventListener('loadeddata', () => {
