@@ -6,7 +6,7 @@ self.addEventListener('message', event => {
 
         // Function to preload a single video
         function preloadVideo(videoPath, index) {
-            fetch(videoPath)
+            fetch('wwwroot/videos/' + videoPath) // Adjust the path accordingly
                 .then(response => response.blob())
                 .then(videoBlob => {
                     const objectURL = URL.createObjectURL(videoBlob);
