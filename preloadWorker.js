@@ -1,32 +1,38 @@
-self.addEventListener('message', event => {
+self.addEventListener('message', async event => {
     const videoPaths = event.data;
 
     if (Array.isArray(videoPaths)) {
-        // Array to hold preloaded video elements
         const preloadedVideos = [];
 
-        // Function to preload a single video
-        function preloadVideo(videoPath, index) {
-            const preloadVideo = document.createElement('video');
-            preloadVideo.src = videoPath;
-            preloadVideo.preload = 'auto';
+        async function preloadVideo(videoPath) {
+            try {
+                const response = await fetch(videoPath);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const objectURL = URL.createObjectURL(blob);
 
-            preloadVideo.addEventListener('loadeddata', () => {
-                // Add the preloaded video element to the array
-                preloadedVideos[index] = preloadVideo;
+                    const video = document.createElement('video');
+                    video.src = objectURL;
+                    video.preload = 'auto';
 
-                // Check if all videos are preloaded
-                if (preloadedVideos.length === videoPaths.length) {
-                    // Post all preloaded video elements back to the main thread
-                    self.postMessage(preloadedVideos);
+                    await video.ready;
+
+                    preloadedVideos.push(video);
+
+                    if (preloadedVideos.length === videoPaths.length) {
+                        self.postMessage(preloadedVideos);
+                    }
+                } else {
+                    console.error(`Failed to fetch video: ${videoPath}`);
                 }
-            });
+            } catch (error) {
+                console.error(`Error while preloading video: ${error.message}`);
+            }
         }
 
-        // Preload all videos in parallel
-        videoPaths.forEach((videoPath, index) => {
-            preloadVideo(videoPath, index);
-        });
+        for (const videoPath of videoPaths) {
+            preloadVideo(videoPath);
+        }
     } else {
         console.error('Invalid videoPaths data:', videoPaths);
     }
