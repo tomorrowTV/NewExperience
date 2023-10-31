@@ -1,14 +1,13 @@
-// script.js
 const preloadWorker = new Worker('preloadWorker.js'); // Create a new Web Worker for preloading tasks
 
 document.addEventListener('DOMContentLoaded', function () {
     const videoArray = [
-        'wwwroot/videos/SW1.mp4',
-        'wwwroot/videos/SW2.mp4',
-        'wwwroot/videos/SW3.mp4',
-        'wwwroot/videos/SW4.mp4',
-        'wwwroot/videos/SW5.mp4',
-        'wwwroot/videos/SW6.mp4',
+        'SW1.mp4',
+        'SW2.mp4',
+        'SW3.mp4',
+        'SW4.mp4',
+        'SW5.mp4',
+        'SW6.mp4',
         // Add more video filenames as needed
     ];
 
@@ -37,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function playVideoByIndex(index) {
         videoElement.pause();
-        videoElement.src = videoArray[index];
+        videoElement.src = 'wwwroot/videos/' + videoArray[index];
         videoElement.currentTime = audioPlayer.currentTime;
 
         videoElement.addEventListener('timeupdate', () => {
@@ -59,17 +58,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function startAudio() {
         audioPlayer.load();
-        audioPlayer.play().catch(error => {
+        audioPlayer.play().catch error => {
             console.error('Audio playback error:', error.message);
         });
     }
 
     // Message event handler for the preloadWorker
-    preloadWorker.onmessage = (event) => {
-        // Handle the preloaded video elements (if needed)
-        const preloadedVideoElements = event.data;
+    preloadWorker.onmessage = event => {
+        // Handle the preloaded video element
+        const preloadedVideoElement = event.data;
 
-        // You can use these preloadedVideoElements in your application as needed
+        // You can use this preloadedVideoElement in your application as needed
     };
 
     document.addEventListener('click', () => {
@@ -81,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const nextIndex = (currentVideoIndex + 1) % videoArray.length;
         playVideoByIndex(nextIndex);
 
-        // Notify the preloadWorker to preload the next video (if needed)
+        // Notify the preloadWorker to preload the next video
         preloadWorker.postMessage(videoArray[nextIndex]);
     });
 });
