@@ -1,16 +1,18 @@
 const preloadWorker = new Worker('preloadWorker.js'); // Create a new Web Worker for preloading tasks
 
-document.addEventListener('DOMContentLoaded', function () {
-    const videoArray = [
-        'SW1.mp4',
-        'SW2.mp4',
-        'SW3.mp4',
-        'SW4.mp4',
-        'SW5.mp4',
-        'SW6.mp4',
-        // Add more video filenames as needed
-    ];
+// Define the videoArray outside the DOMContentLoaded event
+const videoArray = [
+    'SW1.mp4',
+    'SW2.mp4',
+    'SW3.mp4',
+    'SW4.mp4',
+    'SW5.mp4',
+    'SW6.mp4',
+    // Add more video filenames as needed
+];
 
+// The rest of your code within the DOMContentLoaded event
+document.addEventListener('DOMContentLoaded', function () {
     const videoPlayerContainer = document.getElementById('videoPlayerContainer');
     const videoElement = document.createElement('video');
     videoElement.id = 'videoPlayer';
