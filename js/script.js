@@ -1,13 +1,14 @@
+// script.js
 const preloadWorker = new Worker('preloadWorker.js'); // Create a new Web Worker for preloading tasks
 
 document.addEventListener('DOMContentLoaded', function () {
     const videoArray = [
-        'SW1.mp4',
-        'SW2.mp4',
-        'SW3.mp4',
-        'SW4.mp4',
-        'SW5.mp4',
-        'SW6.mp4',
+        'wwwroot/videos/SW1.mp4',
+        'wwwroot/videos/SW2.mp4',
+        'wwwroot/videos/SW3.mp4',
+        'wwwroot/videos/SW4.mp4',
+        'wwwroot/videos/SW5.mp4',
+        'wwwroot/videos/SW6.mp4',
         // Add more video filenames as needed
     ];
 
@@ -36,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function playVideoByIndex(index) {
         videoElement.pause();
-        videoElement.src = 'wwwroot/videos/' + videoArray[index];
+        videoElement.src = videoArray[index];
         videoElement.currentTime = audioPlayer.currentTime;
 
         videoElement.addEventListener('timeupdate', () => {
@@ -65,10 +66,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Message event handler for the preloadWorker
     preloadWorker.onmessage = (event) => {
-        // Handle the preloaded video element
-        const preloadedVideoElement = event.data;
+        // Handle the preloaded video elements (if needed)
+        const preloadedVideoElements = event.data;
 
-        // You can use this preloadedVideoElement in your application as needed
+        // You can use these preloadedVideoElements in your application as needed
     };
 
     document.addEventListener('click', () => {
@@ -80,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const nextIndex = (currentVideoIndex + 1) % videoArray.length;
         playVideoByIndex(nextIndex);
 
-        // Notify the preloadWorker to preload the next video
+        // Notify the preloadWorker to preload the next video (if needed)
         preloadWorker.postMessage(videoArray[nextIndex]);
     });
 });
