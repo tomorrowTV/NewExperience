@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
     videoPlayerContainer.appendChild(videoElement);
 
     const audioPlayer = document.createElement('audio');
-    audioPlayer.src = 'Song.m4a'; // Update this to the relative path of your audio file
+    audioPlayer.src = 'wwwroot/assets/Song.m4a'; // Update this to the relative path of your audio file
     audioPlayer.preload = 'auto';
     audioPlayer.load();
     document.body.appendChild(audioPlayer);
