@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function startAudio() {
         audioPlayer.load();
-        audioPlayer.play().catch error => {
+        audioPlayer.play().catch(error => {
             console.error('Audio playback error:', error.message);
         });
     }
