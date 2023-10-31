@@ -1,31 +1,33 @@
-const preloadWorker = new Worker('preloadWorker.js');
+self.addEventListener('message', event => {
+    const videoPaths = event.data;
 
-document.addEventListener('DOMContentLoaded', function () {
-    const videoArray = [
-        'SW1.mp4',
-        'SW2.mp4',
-        'SW3.mp4',
-        'SW4.mp4',
-        'SW5.mp4',
-        'SW6.mp4',
-        // Add more video filenames as needed
-    ];
+    if (Array.isArray(videoPaths)) {
+        const preloadedVideos = [];
 
-    preloadWorker.postMessage(videoArray);
+        // Function to preload a single video
+        function preloadVideo(videoPath, index) {
+            fetch('wwwroot/videos/' + videoPath)
+                .then(response => response.blob())
+                .then(videoBlob => {
+                    const objectURL = URL.createObjectURL(videoBlob);
+                    const preloadVideo = document.createElement('video');
+                    preloadVideo.src = objectURL;
+                    preloadVideo.preload = 'auto';
 
-    preloadWorker.onmessage = (event) => {
-        const preloadedVideoUrls = event.data;
+                    preloadVideo.addEventListener('loadeddata', () => {
+                        preloadedVideos[index] = objectURL; // Store the URL, not the video element
 
-        // Loop through preloaded URLs and create video elements
-        preloadedVideoUrls.forEach(url => {
-            const videoElement = document.createElement('video');
-            videoElement.src = url;
-            videoElement.preload = 'auto';
+                        if (preloadedVideos.length === videoPaths.length) {
+                            self.postMessage(preloadedVideos);
+                        }
+                    });
+                });
+        }
 
-            // Add the video element to the DOM
-            // You can customize the placement in the DOM as needed
-            const videoPlayerContainer = document.getElementById('videoPlayerContainer');
-            videoPlayerContainer.appendChild(videoElement);
+        videoPaths.forEach((videoPath, index) => {
+            preloadVideo(videoPath, index);
         });
-    };
+    } else {
+        console.error('Invalid videoPaths data:', videoPaths);
+    }
 });
