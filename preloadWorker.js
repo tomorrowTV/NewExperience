@@ -27,5 +27,5 @@ document.addEventListener('DOMContentLoaded', function () {
             const videoPlayerContainer = document.getElementById('videoPlayerContainer');
             videoPlayerContainer.appendChild(videoElement);
         });
-    }
+    };
 });
